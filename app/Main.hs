@@ -3,13 +3,15 @@ module Main where
 import Data
 import Lib
 import System.IO
+import qualified System.Random as R
 
 main :: IO ()
 main = do
+  gen <- R.newStdGen
   let
-    game = makeGame grid languages
+    filledInGrid = fillInBlanks gen grid
   hSetBuffering stdout NoBuffering
-  playTurn game
+  playTurn $ makeGame filledInGrid languages
 
 playTurn :: Game -> IO ()
 playTurn game = do

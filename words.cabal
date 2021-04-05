@@ -35,6 +35,7 @@ library
   build-depends:
       base >=4.7 && <5
     , containers
+    , random
   default-language: Haskell2010
 
 executable words
@@ -47,6 +48,7 @@ executable words
   build-depends:
       base >=4.7 && <5
     , containers
+    , random
     , words
   default-language: Haskell2010
 
@@ -62,5 +64,6 @@ test-suite words-test
       base >=4.7 && <5
     , containers
     , hspec
+    , random
     , words
   default-language: Haskell2010

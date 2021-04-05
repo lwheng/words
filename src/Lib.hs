@@ -9,6 +9,7 @@ module Lib (
   , findWordInLine
   , outputGame
   , findWords
+  , fillInBlanks
   , formatGrid
   , gridWithCoords
   , makeGame
@@ -24,9 +25,11 @@ module Lib (
 ) where
 
 import           Data
+import qualified Data.Char as Char
 import qualified Data.List as List
 import qualified Data.Map as M
 import qualified Data.Maybe as Maybe
+import qualified System.Random as R
 
 data Game = Game
               { gameGrid :: Grid Cell
@@ -61,11 +64,43 @@ playGame game word =
     Just cs -> game { gameWords = M.insert word (Just cs) $ gameWords game }
 
 formatGame :: Game -> String
-formatGame game = formatGrid (gameGrid game)
+formatGame game = formatGameGrid game
                ++ "\n\n"
                ++ (show $ score game)
                ++ "/"
                ++ (show $ totalWords game)
+
+formatGameGrid :: Game -> String
+formatGameGrid game =
+  let
+    mGrid = gameGrid game
+    dict  = gameWords game
+    cellSet = concat . Maybe.catMaybes . M.elems $ dict
+    formatCell cell =
+      let
+        char = cell2char cell
+      in
+        if cell `elem` cellSet then char else Char.toLower char
+    charGrid = mapOverGrid formatCell mGrid
+  in
+    unlines charGrid
+
+makeRandomGrid :: R.RandomGen t => t -> [[Char]]
+makeRandomGrid gen =
+  let
+    (gen1, gen2) = R.split gen
+    row = R.randomRs ('A', 'Z') gen1
+  in
+    row : makeRandomGrid gen2
+
+fillInBlanks :: R.RandomGen t => t -> Grid Char -> Grid Char
+fillInBlanks gen mGrid =
+  let
+    r = makeRandomGrid gen
+    fill '_' x = x
+    fill c   _ = c
+  in
+    zipOverGridWith fill mGrid r
 
 completed :: Game -> Bool
 completed game = totalWords game == score game
