@@ -24,6 +24,8 @@ dependencies:
 
 library:
   source-dirs: src
+  ghc-options:
+  - -Wall
 
 executables:
   words:
@@ -34,7 +36,6 @@ executables:
     - -rtsopts
     - -with-rtsopts=-N
     - -dynamic
-    - -Wall
     dependencies:
     - words
 

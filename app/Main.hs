@@ -4,4 +4,8 @@ import Data
 import Lib
 
 main :: IO ()
-main = print $ findWords grid languages
+main =
+    let
+        gwc = gridWithCoords grid
+    in
+        outputGrid gwc

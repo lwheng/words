@@ -5,9 +5,9 @@ module Data (
   , Grid
 ) where
 
-type Grid = [String]
+type Grid a = [[a]]
 
-grid :: Grid
+grid :: Grid Char
 grid = [ "__C________R___"
        , "__SI________U__"
        , "__HASKELL____B_"
