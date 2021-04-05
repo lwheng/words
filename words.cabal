@@ -34,6 +34,7 @@ library
   ghc-options: -Wall
   build-depends:
       base >=4.7 && <5
+    , containers
   default-language: Haskell2010
 
 executable words
@@ -45,6 +46,7 @@ executable words
   ghc-options: -threaded -rtsopts -with-rtsopts=-N -dynamic
   build-depends:
       base >=4.7 && <5
+    , containers
     , words
   default-language: Haskell2010
 
@@ -58,6 +60,7 @@ test-suite words-test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N -dynamic -Wall
   build-depends:
       base >=4.7 && <5
+    , containers
     , hspec
     , words
   default-language: Haskell2010

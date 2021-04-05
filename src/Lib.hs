@@ -2,26 +2,76 @@ module Lib (
     cell2char
   , coordsGrid
   , findWord
+  , completed
   , findWordInCellLinePrefix
+  , playGame
+  , formatGame
   , findWordInLine
+  , outputGame
   , findWords
   , formatGrid
   , gridWithCoords
+  , makeGame
   , outputGrid
+  , score
   , skew
+  , totalWords
   , zipOverGrid
   , zipOverGridWith
 
   , Cell (..)
+  , Game (..)
 ) where
 
 import           Data
 import qualified Data.List as List
+import qualified Data.Map as M
 import qualified Data.Maybe as Maybe
+
+data Game = Game
+              { gameGrid :: Grid Cell
+              , gameWords :: M.Map String (Maybe [Cell])
+              }
+          deriving (Show)
 
 data Cell = Cell (Integer, Integer) Char
           | Indent
           deriving (Eq, Ord, Show)
+
+makeGame :: Grid Char -> [String] -> Game
+makeGame mGrid mWords =
+  let
+    gwc = gridWithCoords mGrid
+    list = map (\w -> (w, Nothing)) mWords
+    dict = M.fromList list
+  in
+    Game gwc dict
+
+totalWords :: Game -> Int
+totalWords = length . M.keys . gameWords
+
+score :: Game -> Int
+score = length . Maybe.catMaybes . M.elems . gameWords
+
+playGame :: Game -> String -> Game
+playGame game word | not $ M.member word (gameWords game) = game
+playGame game word =
+  case findWord (gameGrid game) word of
+    Nothing -> game
+    Just cs -> game { gameWords = M.insert word (Just cs) $ gameWords game }
+
+formatGame :: Game -> String
+formatGame game = formatGrid (gameGrid game)
+               ++ "\n\n"
+               ++ (show $ score game)
+               ++ "/"
+               ++ (show $ totalWords game)
+
+completed :: Game -> Bool
+completed game = totalWords game == score game
+
+outputGame :: Game -> IO ()
+outputGame = putStrLn . formatGame
 
 mapOverGrid :: (a -> b) -> Grid a -> Grid b
 mapOverGrid = map . map
